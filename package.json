@@ -3,6 +3,9 @@
   "description": "Lightweight QR encoder for the browser & node loosely based on zxing",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "types": "types/index.d.ts",
+  "homepage": "https://github.com/WasabiThumb/enqr",
+  "repository": "github:WasabiThumb/enqr",
   "directories": {
     "lib": "dist",
     "test": "tests"

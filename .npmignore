@@ -4,3 +4,5 @@ tests
 jest.config.js
 tsconfig.json
 .idea
+webpack.config.js
+tsconfig.webpack.json

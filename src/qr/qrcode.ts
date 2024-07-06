@@ -319,6 +319,7 @@ class QRCodeImpl implements QRCode {
             img.addEventListener("error", () => {
                 res(img);
             });
+            img.src = url;
         });
     }
 

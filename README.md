@@ -2,7 +2,26 @@
 A lightweight QR encoder for the browser & node loosely based on [zxing](https://github.com/zxing/zxing).
 This is strictly a QR encoder & renderer, future updates should consist mainly of bug fixes.
 
-## Usage
+## Usage (Browser)
+```html
+<img id="qr" src="" alt="QR Code">
+<script src="https://unpkg.com/qrenc@^1.1" type="text/javascript"></script>
+<script>
+    // Same as NodeJS
+    enqr(
+        "https://wasabithumb.github.io/",
+        {
+            errorCorrectionLevel: "M",
+            characterSet: "ISO_8859_1"
+        }   
+    ).renderToImage({
+        image: document.querySelector("#qr"),
+        trySVG: true
+    }).catch(console.error);
+</script>
+```
+
+## Usage (NodeJS)
 ```js
 // ES6
 import enqr from "enqr";

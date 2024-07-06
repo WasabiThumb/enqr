@@ -1,12 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "es5",
     "module": "commonjs",
     "rootDir": "./src",
-    "declaration": true,
-    "inlineSourceMap": true,
-    "outDir": "./dist",
-    "declarationDir": "./types",
+    "outDir": "./umd",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

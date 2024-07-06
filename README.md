@@ -5,15 +5,15 @@ This is strictly a QR encoder & renderer, future updates should consist mainly o
 ## Usage (Browser)
 ```html
 <img id="qr" src="" alt="QR Code">
-<script src="https://unpkg.com/qrenc@^1.1" type="text/javascript"></script>
+<script src="https://unpkg.com/enqr@1.1.0/umd/enqr.min.js" integrity="sha384-ILixcZQvrub+hlDJ53vKkdICGgwmQGmn5ktpAENXyZVTwPuVjdmJM4gj+ql86KHC" crossorigin="anonymous"></script>
 <script>
     // Same as NodeJS
     enqr(
         "https://wasabithumb.github.io/",
         {
-            errorCorrectionLevel: "M",
+            errorCorrectionLevel: "H",
             characterSet: "ISO_8859_1"
-        }   
+        }
     ).renderToImage({
         image: document.querySelector("#qr"),
         trySVG: true

@@ -129,7 +129,7 @@ export class TernaryMatrix {
             }
             sb.appendNewline();
         }
-        return sb.toString(false);
+        return sb.toString();
     }
 
     clone(): TernaryMatrix {

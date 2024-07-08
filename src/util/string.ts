@@ -146,13 +146,51 @@ export namespace Charset {
 
 }
 
+type TransferableArrayBuffer = ArrayBuffer & {
+    transfer(length: number): ArrayBuffer
+};
+
+const IS_BIG_ENDIAN: boolean = (() => {
+    const buf = new ArrayBuffer(2);
+    const u8 = new Uint8Array(buf);
+    const u16 = new Uint16Array(buf);
+    u8[0] = 0xAA;
+    u8[1] = 0xBB;
+    return u16[0] === 0xAABB;
+})();
+
+const UTF_16NATIVE: Charset = Charsets[IS_BIG_ENDIAN ? "UTF_16BE" : "UTF_16LE"];
+
 export class StringBuilder {
 
-    private readonly arr: number[];
+    private static LOAD_FACTOR: number = 0.75;
+
+    private arr: Uint16Array;
+    private capacity: number;
     private index: number;
     constructor(capacity: number = 16) {
-        this.arr = new Array(Math.abs(capacity));
+        this.capacity = Math.abs(capacity);
+        this.arr = new Uint16Array(this.capacity);
         this.index = 0;
+    }
+
+    private ensureCapacity(extra: number): void {
+        let target: number = this.index + extra;
+        if (target <= this.capacity) return;
+
+        target = Math.ceil(target / StringBuilder.LOAD_FACTOR);
+
+        let ab: ArrayBuffer = this.arr.buffer;
+        if ("transfer" in ab) {
+            ab = (ab as TransferableArrayBuffer).transfer(target << 1);
+            this.arr = new Uint16Array(ab);
+        } else {
+            const n = new Uint16Array(target);
+            n.set(this.arr, 0);
+            this.arr = n;
+        }
+
+        this.capacity = target;
     }
 
     get length(): number {
@@ -164,20 +202,7 @@ export class StringBuilder {
     }
 
     append(value: string | { toString(): string }): this {
-        if (typeof value === "string") {
-            switch (value.length) {
-                case 0:
-                    break;
-                case 1:
-                    this.appendChar(value.charCodeAt(0));
-                    break;
-                default:
-                    this.appendString(value);
-                    break;
-            }
-        } else {
-            this.appendString(value.toString());
-        }
+        this.appendString(typeof value === "string" ? value : value.toString());
         return this;
     }
 
@@ -194,20 +219,20 @@ export class StringBuilder {
     }
 
     appendChar(c: number): this {
+        this.ensureCapacity(1);
         this.arr[this.index++] = c;
         return this;
     }
 
     appendString(s: string): this {
-        for (let i=0; i < s.length; i++) {
-            this.appendChar(s.charCodeAt(i));
-        }
+        this.ensureCapacity(s.length);
+        for (let i=0; i < s.length; i++) this.arr[this.index++] = s.charCodeAt(i);
         return this;
     }
 
-    toString(narrow: boolean = true): string {
-        if (narrow && this.index < this.arr.length) this.arr.length = this.index;
-        return String.fromCharCode.apply(null, this.arr) as unknown as string;
+    toString(): string {
+        const u8 = (new Uint8Array(this.arr.buffer)).subarray(0, this.index << 1);
+        return UTF_16NATIVE.decode(u8);
     }
 
 }

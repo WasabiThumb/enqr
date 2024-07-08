@@ -110,6 +110,7 @@ This covers all methods that may return SVG data under any circumstances (`rende
 | --: | :-: | :-- |
 | trySVG | `boolean` | If true, and SVGs are supported in the current environment, the render operation may return SVG (otherwise PNG). |
 | svgNoWhitespace | `boolean` | If true, no whitespace will be included between SVG tags. |
+| svgCollation | ``0`` \| ``1`` \| ``2`` \| ``3`` | An optimization that determines how pixels will be collated into shapes. Default is 3. Higher collation tends to produce smaller SVGs. Collation levels 1 & 2 may be faster to render. |
 
 ### HTML Image
 This applies only to `renderToImage`

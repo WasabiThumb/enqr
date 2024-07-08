@@ -2,6 +2,8 @@
 A lightweight QR encoder for the browser & node loosely based on [zxing](https://github.com/zxing/zxing).
 This is strictly a QR encoder & renderer, future updates should consist mainly of bug fixes.
 
+[Live Demo](https://jsfiddle.net/5rept9nf/5/) | [GitHub](https://github.com/WasabiThumb/enqr/) | [NPM](https://www.npmjs.com/package/enqr)
+
 ## Usage (Browser)
 ```html
 <img id="qr" src="" alt="QR Code">

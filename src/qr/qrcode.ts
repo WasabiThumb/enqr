@@ -312,7 +312,8 @@ class QRCodeImpl implements QRCode {
             const url = await this.renderToURL(options);
             img.addEventListener("load", () => {
                 if (revoke && url.startsWith("blob:")) URL.revokeObjectURL(url);
-                img.style.imageRendering = "crisp-edges";
+                img.style.imageRendering = "pixelated";
+                if (window.getComputedStyle(img).imageRendering !== "pixelated") img.style.imageRendering = "crisp-edges";
                 img.style.objectFit = "contain";
                 res(img);
             });

@@ -4,7 +4,6 @@
  */
 
 import {ErrorCorrectionLevel} from "../ec/level";
-import {BitMatrix} from "../collection/bitMatrix";
 
 export interface ECB {
     readonly count: number,
@@ -64,6 +63,7 @@ export class Version {
         return this.ecBlocks[ErrorCorrectionLevel.getOrdinal(ecLevel)];
     }
 
+    /*
     buildFunctionPattern(): BitMatrix {
         const dimension: number = this.dimensionForVersion;
         const bitMatrix = new BitMatrix(dimension, dimension);
@@ -101,11 +101,13 @@ export class Version {
 
         return bitMatrix;
     }
+     */
 
 }
 
 export namespace Version {
 
+    /*
     const VERSION_DECODE_INFO: Int32Array = new Int32Array([
         0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
         0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78,
@@ -115,6 +117,7 @@ export namespace Version {
         0x209D5, 0x216F0, 0x228BA, 0x2379F, 0x24B0B,
         0x2542E, 0x26A64, 0x27541, 0x28C69
     ]);
+     */
 
     // see buildVersions
     let VERSIONS: Version[] = [];
@@ -124,6 +127,7 @@ export namespace Version {
         return VERSIONS[versionNumber - 1];
     }
 
+    /*
     export function getProvisionalVersionForDimension(dimension: number): Version {
         if (dimension % 4 !== 1) {
             throw new Error("Dimension is not 1 mod 4");
@@ -153,6 +157,7 @@ export namespace Version {
         if (bestDifference <= 3) return getVersionForNumber(bestVersion);
         return null;
     }
+    */
 
     //
 

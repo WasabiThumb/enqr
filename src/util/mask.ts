@@ -1,4 +1,4 @@
-import {TernaryMatrix, TernaryValue} from "../collection/ternaryMatrix";
+import {TernaryValue} from "../collection/ternaryMatrix";
 
 /*
  * Reference: https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/qrcode/encoder/MaskUtil.java

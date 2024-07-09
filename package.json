@@ -43,6 +43,6 @@
   "dependencies": {
     "browser-or-node": "^3.0.0",
     "canvas": "^2.11.2",
-    "iconv-lite": "^0.6.3"
+    "iconv-lite": "0.6.3"
   }
 }

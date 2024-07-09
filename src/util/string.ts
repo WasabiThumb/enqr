@@ -73,8 +73,8 @@ class NativeCharset implements Charset {
  * <a href="https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/common/StringUtils.java">xzing/common/StringUtils</a>
  */
 export const Charsets = {
-    US_ASCII: new IconvCharset("us-ascii", "US_ASCII") as Charset,
-    ISO_8859_1: new IconvCharset("latin1", "ISO_8859_1") as Charset,
+    US_ASCII: new IconvCharset("ascii", "US_ASCII") as Charset,
+    ISO_8859_1: new IconvCharset("iso88591", "ISO_8859_1") as Charset,
     UTF_8: new NativeCharset() as Charset,
     UTF_16BE: new IconvCharset("utf16-be", "UTF_16BE") as Charset,
     UTF_16LE: new IconvCharset("utf16le", "UTF_16LE") as Charset,

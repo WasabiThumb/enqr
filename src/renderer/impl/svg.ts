@@ -330,6 +330,7 @@ class TracerLineGroup {
         if (startIndex >= this.traversed.length) return null;
         this.traversed.set(startIndex);
 
+        let lastDirection: number = -1;
         let cur: TracerLine = this.lines[startIndex];
         let ret: TracerLine[] = [];
 
@@ -343,11 +344,14 @@ class TracerLineGroup {
             if (nextIndex === startIndex) break;
             this.traversed.set(nextIndex);
 
-            ret.push(cur);
+            if (cur[4] !== lastDirection) {
+                ret.push(cur);
+                lastDirection = cur[4];
+            }
             cur = next;
         }
 
-        ret.push(cur);
+        if (cur[4] !== lastDirection) ret.push(cur);
         return ret;
     }
 

@@ -86,6 +86,7 @@ export class BitArray {
         this.i32[i >> 5] ^= (1 << (i & 31));
     }
 
+    /*
     getNextSet(from: number = 0): number {
         if (from >= this.size) return this.size;
         let bitsOffset = from >> 5;
@@ -98,6 +99,7 @@ export class BitArray {
         const result = (bitsOffset * 32) + ctz32(currentBits);
         return Math.min(result, this.size);
     }
+    */
 
     getNextUnset(from: number = 0): number {
         if (from >= this.size) return this.size;
@@ -150,6 +152,7 @@ export class BitArray {
         this.i32.fill(0);
     }
 
+    /*
     isRange(start: number, end: number, value: boolean = true): boolean {
         let ret: boolean = true;
         this.withRange(start, end, (v, mask) => {
@@ -161,6 +164,7 @@ export class BitArray {
         });
         return ret;
     }
+    */
 
     appendBit(bit: boolean = true): void {
         const s: number = this.size;
@@ -189,11 +193,13 @@ export class BitArray {
         }
     }
 
+    /*
     clone(): BitArray {
         const ret = new BitArray(this.size);
         ret.i32.set(this.i32);
         return ret;
     }
+    */
 
     copyTo(dest: Int32Array, offset: number = 0): void {
         const maxLen: number = dest.length - offset;

@@ -12,65 +12,50 @@ import {MaskUtil} from "./mask";
 
 export namespace MatrixUtil {
 
-    export const POSITION_DETECTION_PATTERN: BitMatrix = BitMatrix.of([
-        [1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 0, 1],
-        [1, 0, 1, 1, 1, 0, 1],
-        [1, 0, 1, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1],
-    ]);
+    export const POSITION_DETECTION_PATTERN: BitMatrix = BitMatrix.raw(7,127,65,93,93,93,65,127);
 
-    export const POSITION_ADJUSTMENT_PATTERN: BitMatrix = BitMatrix.of([
-        [ 1, 1, 1, 1, 1 ],
-        [ 1, 0, 0, 0, 1 ],
-        [ 1, 0, 1, 0, 1 ],
-        [ 1, 0, 0, 0, 1 ],
-        [ 1, 1, 1, 1, 1 ],
-    ]);
+    export const POSITION_ADJUSTMENT_PATTERN: BitMatrix = BitMatrix.raw(5,31,17,21,17,31);
 
     export const POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE: number[][] = [
-        [-1, -1, -1, -1,  -1,  -1,  -1],  // Version 1
-        [ 6, 18, -1, -1,  -1,  -1,  -1],  // Version 2
-        [ 6, 22, -1, -1,  -1,  -1,  -1],  // Version 3
-        [ 6, 26, -1, -1,  -1,  -1,  -1],  // Version 4
-        [ 6, 30, -1, -1,  -1,  -1,  -1],  // Version 5
-        [ 6, 34, -1, -1,  -1,  -1,  -1],  // Version 6
-        [ 6, 22, 38, -1,  -1,  -1,  -1],  // Version 7
-        [ 6, 24, 42, -1,  -1,  -1,  -1],  // Version 8
-        [ 6, 26, 46, -1,  -1,  -1,  -1],  // Version 9
-        [ 6, 28, 50, -1,  -1,  -1,  -1],  // Version 10
-        [ 6, 30, 54, -1,  -1,  -1,  -1],  // Version 11
-        [ 6, 32, 58, -1,  -1,  -1,  -1],  // Version 12
-        [ 6, 34, 62, -1,  -1,  -1,  -1],  // Version 13
-        [ 6, 26, 46, 66,  -1,  -1,  -1],  // Version 14
-        [ 6, 26, 48, 70,  -1,  -1,  -1],  // Version 15
-        [ 6, 26, 50, 74,  -1,  -1,  -1],  // Version 16
-        [ 6, 30, 54, 78,  -1,  -1,  -1],  // Version 17
-        [ 6, 30, 56, 82,  -1,  -1,  -1],  // Version 18
-        [ 6, 30, 58, 86,  -1,  -1,  -1],  // Version 19
-        [ 6, 34, 62, 90,  -1,  -1,  -1],  // Version 20
-        [ 6, 28, 50, 72,  94,  -1,  -1],  // Version 21
-        [ 6, 26, 50, 74,  98,  -1,  -1],  // Version 22
-        [ 6, 30, 54, 78, 102,  -1,  -1],  // Version 23
-        [ 6, 28, 54, 80, 106,  -1,  -1],  // Version 24
-        [ 6, 32, 58, 84, 110,  -1,  -1],  // Version 25
-        [ 6, 30, 58, 86, 114,  -1,  -1],  // Version 26
-        [ 6, 34, 62, 90, 118,  -1,  -1],  // Version 27
-        [ 6, 26, 50, 74,  98, 122,  -1],  // Version 28
-        [ 6, 30, 54, 78, 102, 126,  -1],  // Version 29
-        [ 6, 26, 52, 78, 104, 130,  -1],  // Version 30
-        [ 6, 30, 56, 82, 108, 134,  -1],  // Version 31
-        [ 6, 34, 60, 86, 112, 138,  -1],  // Version 32
-        [ 6, 30, 58, 86, 114, 142,  -1],  // Version 33
-        [ 6, 34, 62, 90, 118, 146,  -1],  // Version 34
-        [ 6, 30, 54, 78, 102, 126, 150],  // Version 35
-        [ 6, 24, 50, 76, 102, 128, 154],  // Version 36
-        [ 6, 28, 54, 80, 106, 132, 158],  // Version 37
-        [ 6, 32, 58, 84, 110, 136, 162],  // Version 38
-        [ 6, 26, 54, 82, 110, 138, 166],  // Version 39
-        [ 6, 30, 58, 86, 114, 142, 170],  // Version 40
+        [ 6, 18 ],  // Version 2
+        [ 6, 22 ],  // Version 3
+        [ 6, 26 ],  // Version 4
+        [ 6, 30 ],  // Version 5
+        [ 6, 34 ],  // Version 6
+        [ 6, 22, 38 ],  // Version 7
+        [ 6, 24, 42 ],  // Version 8
+        [ 6, 26, 46 ],  // Version 9
+        [ 6, 28, 50 ],  // Version 10
+        [ 6, 30, 54 ],  // Version 11
+        [ 6, 32, 58 ],  // Version 12
+        [ 6, 34, 62 ],  // Version 13
+        [ 6, 26, 46, 66 ],  // Version 14
+        [ 6, 26, 48, 70 ],  // Version 15
+        [ 6, 26, 50, 74 ],  // Version 16
+        [ 6, 30, 54, 78 ],  // Version 17
+        [ 6, 30, 56, 82 ],  // Version 18
+        [ 6, 30, 58, 86 ],  // Version 19
+        [ 6, 34, 62, 90 ],  // Version 20
+        [ 6, 28, 50, 72,  94 ],  // Version 21
+        [ 6, 26, 50, 74,  98 ],  // Version 22
+        [ 6, 30, 54, 78, 102 ],  // Version 23
+        [ 6, 28, 54, 80, 106 ],  // Version 24
+        [ 6, 32, 58, 84, 110 ],  // Version 25
+        [ 6, 30, 58, 86, 114 ],  // Version 26
+        [ 6, 34, 62, 90, 118 ],  // Version 27
+        [ 6, 26, 50, 74,  98, 122 ],  // Version 28
+        [ 6, 30, 54, 78, 102, 126 ],  // Version 29
+        [ 6, 26, 52, 78, 104, 130 ],  // Version 30
+        [ 6, 30, 56, 82, 108, 134 ],  // Version 31
+        [ 6, 34, 60, 86, 112, 138 ],  // Version 32
+        [ 6, 30, 58, 86, 114, 142 ],  // Version 33
+        [ 6, 34, 62, 90, 118, 146 ],  // Version 34
+        [ 6, 30, 54, 78, 102, 126, 150 ],  // Version 35
+        [ 6, 24, 50, 76, 102, 128, 154 ],  // Version 36
+        [ 6, 28, 54, 80, 106, 132, 158 ],  // Version 37
+        [ 6, 32, 58, 84, 110, 136, 162 ],  // Version 38
+        [ 6, 26, 54, 82, 110, 138, 166 ],  // Version 39
+        [ 6, 30, 58, 86, 114, 142, 170 ],  // Version 40
     ];
 
     export const TYPE_INFO_COORDINATES: [ number, number ][] = [
@@ -265,12 +250,11 @@ export namespace MatrixUtil {
 
     function maybeEmbedPositionAdjustmentPatterns(version: Version, matrix: TernaryMatrix): void {
         if (version.versionNumber < 2) return;
-        const index: number = version.versionNumber - 1;
+        const index: number = version.versionNumber - 2;
         const coordinates: number[] = POSITION_ADJUSTMENT_PATTERN_COORDINATE_TABLE[index];
         for (let y of coordinates) {
-            if (y < 0) continue;
             for (let x of coordinates) {
-                if (x >= 0 && matrix.get(x, y) === -1) {
+                if (matrix.get(x, y) === -1) {
                     embedPositionAdjustmentPattern(x - 2, y - 2, matrix);
                 }
             }

@@ -116,6 +116,7 @@ export class GenericGFPoly {
         return this.coefficients[this.coefficients.length - 1 - degree];
     }
 
+    /*
     evaluateAt(a: number): number {
         if (a === 0) return this.getCoefficient(0);
         if (a === 1) {
@@ -131,6 +132,7 @@ export class GenericGFPoly {
         }
         return result;
     }
+    */
 
     private _assertFieldEq(other: GenericGFPoly): void {
         if (this.field !== other.field) throw new Error("GenericGFPolys do not have same GenericGF field");

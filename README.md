@@ -1,5 +1,6 @@
 # EnQR
-A lightweight QR encoder for the browser & node loosely based on [zxing](https://github.com/zxing/zxing).
+A lightweight QR encoder for the browser & node loosely based on [zxing](https://github.com/zxing/zxing). The browser bundle is about 200KB (compare to [3.6MB](https://www.npmjs.com/package/qreator?activeTab=readme)).
+
 This is strictly a QR encoder & renderer, future updates should consist mainly of bug fixes.
 
 [Live Demo](https://jsfiddle.net/5rept9nf/5/) | [GitHub](https://github.com/WasabiThumb/enqr/) | [NPM](https://www.npmjs.com/package/enqr)

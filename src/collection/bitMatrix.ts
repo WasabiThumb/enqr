@@ -7,11 +7,16 @@ export class BitMatrix {
 
     private static ACCESS_HINT_PRIVATE = Symbol();
 
-    static of(array: number[][]): BitMatrix {
-        if (array.length < 1) return new BitMatrix(0, 0);
-        const ret = new BitMatrix(array[0].length, array.length);
-        for (let y=0; y < array.length; y++) {
-            ret.setRow(y, BitArray.of(array[y]));
+    /**
+     * For internal usage. Creates a BitMatrix from the specified bits with a width of at most 8
+     */
+    static raw(width: number, ...rows: number[]): BitMatrix {
+        const height: number = rows.length;
+        const row = new BitArray(width);
+        const ret = new BitMatrix(width, height);
+        for (let i=0; i < height; i++) {
+            row.setBulk(0, rows[i]);
+            ret.setRow(i, row);
         }
         return ret;
     }

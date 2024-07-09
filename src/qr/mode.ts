@@ -5,26 +5,28 @@ import {Version} from "./version";
  */
 
 export enum Mode {
-    TERMINATOR = 0x00,
+    /* TERMINATOR = 0x00, */
     NUMERIC = 0x01,
     ALPHANUMERIC = 0x02,
-    STRUCTURED_APPEND = 0x03,
+    /* STRUCTURED_APPEND = 0x03, */
     BYTE = 0x04,
     ECI = 0x07,
     KANJI = 0x08,
     FNC1_FIRST_POSITION = 0x05,
-    FNC1_SECOND_POSITION = 0x09,
+    /* FNC1_SECOND_POSITION = 0x09, */
     HANZI = 0x0D,
 }
 
 export namespace Mode {
 
+    /*
     export function forBits(bits: number): Mode {
         if (bits < 0x00 || (bits > 0x09 && bits !== 0x0D) || bits === 0x06) {
             throw new Error("Invalid mode bits: 0x" + bits.toString(16));
         }
         return bits as unknown as Mode;
     }
+    */
 
     function getCharacterCountBits0(mode: Mode): [number, number, number] {
         switch (mode) {

@@ -4,6 +4,7 @@ import {StringBuilder} from "../../util/string";
 import {TernaryMatrix} from "../../collection/ternaryMatrix";
 import {BitMatrix} from "../../collection/bitMatrix";
 import {BitArray} from "../../collection/bitArray";
+import CustomStylesFunction = SVGQRRenderer.CustomStylesFunction;
 
 
 const MAGIC_1: string = `<?xml version="1.0" encoding="UTF-8"?>`;
@@ -15,12 +16,14 @@ const MAGIC_5: string = `" xmlns="http://www.w3.org/2000/svg">`;
 const MAGIC_6: string = `<rect x="`;
 const MAGIC_7: string = `" y="`;
 const MAGIC_8: string = `" width="`;
-const MAGIC_10: string = `" fill="`;
-const MAGIC_11: string = `"/>`;
+const MAGIC_10: string = `" class="`;
+const MAGIC_11: string = `/>`;
 
 const MAGIC_12: string = `<path d="`;
-const MAGIC_14: string = `<style><![CDATA[* {shape-rendering: crispEdges;} path {fill-rule: evenodd;}]]></style>`;
+const MAGIC_14: string = `<style><![CDATA[* {shape-rendering: crispEdges;} path {fill-rule: evenodd;} .bg {fill: `;
 const MAGIC_15: string = `</svg>`;
+const MAGIC_16: string = `} .fg {fill: `;
+const MAGIC_17: string = `]]></style>`;
 
 
 export class SVGQRRenderer implements QRRenderer<string, SVGQRRenderer.Options> {
@@ -31,12 +34,22 @@ export class SVGQRRenderer implements QRRenderer<string, SVGQRRenderer.Options> 
         const fg: string = QRRenderOptions.parseColorAsCSS(opts.foreground);
 
         const { matrix } = qr;
-        const [ width, xScale ] = QRRenderOptions.approachTargetSize(matrix.width, opts.targetSize);
-        const [ height, yScale ] = QRRenderOptions.approachTargetSize(matrix.height, opts.targetSize);
+        const intrinsicWidth: number = matrix.width;
+        const intrinsicHeight: number = matrix.height;
 
-        const quiet: number = QRRenderOptions.parseMetric(opts.quietZone, Math.max(width, height));
-        const outerWidth: number = width + (quiet * 2);
-        const outerHeight: number = height + (quiet * 2);
+        let [ displayWidth, displayXScale ] = QRRenderOptions.approachTargetSize(intrinsicWidth, opts.targetSize);
+        let [ displayHeight, displayYScale ] = QRRenderOptions.approachTargetSize(intrinsicHeight, opts.targetSize);
+
+        const intrinsicQuiet: number = QRRenderOptions.parseMetric(opts.quietZone, Math.max(intrinsicWidth, intrinsicHeight));
+        const intrinsicQuiet2: number = intrinsicQuiet * 2;
+        displayWidth += (displayXScale * intrinsicQuiet2);
+        const intrinsicOuterWidth: number = intrinsicWidth + intrinsicQuiet2;
+        displayHeight += (displayYScale * intrinsicQuiet2);
+        const intrinsicOuterHeight: number = intrinsicHeight + intrinsicQuiet2;
+
+        const customCSS: string | CustomStylesFunction = opts.svgCustomCSS;
+        const hasCustomGlobalCSS: boolean = (typeof customCSS === "string" && customCSS.length > 0);
+        const hasCustomLocalCSS: boolean = (typeof customCSS === "function");
 
         const out = new StringBuilder();
         let newline: (() => void);
@@ -53,58 +66,76 @@ export class SVGQRRenderer implements QRRenderer<string, SVGQRRenderer.Options> 
         }
 
         // Add opening tag
-        out.append(MAGIC_1);
+        out.append(MAGIC_1); // <?xml version="1.0" encoding="UTF-8"?>
         newline();
-        out.append(MAGIC_2)
-            .append(outerWidth)
-            .append(MAGIC_3)
-            .append(outerHeight)
-            .append(MAGIC_4)
-            .append(outerWidth)
+        out.append(MAGIC_2) // <svg width="
+            .append(displayWidth)
+            .append(MAGIC_3) // " height="
+            .append(displayHeight)
+            .append(MAGIC_4) // " version="1.1" viewBox="0 0
+            .append(intrinsicOuterWidth)
             .appendSpace()
-            .append(outerHeight)
-            .append(MAGIC_5);
+            .append(intrinsicOuterHeight)
+            .append(MAGIC_5); // " xmlns="http://www.w3.org/2000/svg">
+
+        // Add global styles
         newline();
         space();
-        out.append(MAGIC_14);
+        out.append(MAGIC_14) // <style><![CDATA[* {shape-rendering: crispEdges;} path {fill-rule: evenodd;} .bg {fill:
+            .append(bg)
+            .append(MAGIC_16) // } .fg {fill:
+            .append(fg)
+            .appendChar(125); // }
+        if (hasCustomGlobalCSS) {
+            out.appendSpace()
+                .append((customCSS as string).replace(/]]>/g, '\\u005d\\u005d\\u003e'));
+        }
+        out.append(MAGIC_17); // }]]></style>
         newline();
 
-        function addRect(x: number, y: number, width: number, height: number, color: string): void {
+        // Function to compute local custom styles for a path
+        function localStyles(tagName: "rect" | "path", className: "bg" | "fg", path: string): string {
+            if (!hasCustomLocalCSS) return "";
+            const styles = (customCSS as CustomStylesFunction)(tagName, className, path);
+            if (!styles) return "";
+            return " style=\"" + styles.replace(/(?<!\\)"/g, "&#34;") + "\"";
+        }
+
+        // Function to add a rect to the SVG
+        function addRect(x: number, y: number, width: number, height: number, color: "bg" | "fg"): void {
             space();
-            out.append(MAGIC_6)
+            out.append(MAGIC_6) // <rect x="
                 .append(x)
-                .append(MAGIC_7)
+                .append(MAGIC_7) // " y="
                 .append(y)
-                .append(MAGIC_8)
+                .append(MAGIC_8) // " width="
                 .append(width)
-                .append(MAGIC_3)
+                .append(MAGIC_3) // " height="
                 .append(height)
-                .append(MAGIC_10)
+                .append(MAGIC_10) // " class="
                 .append(color)
-                .append(MAGIC_11);
+                .appendChar(34) // "
+                .append(localStyles(
+                    "rect",
+                    color,
+                    `M ${x},${y} L ${x + width},${y} L ${x + width},${y + height} L ${x},${y + height} Z`
+                ))
+                .append(MAGIC_11); // />
             newline();
         }
 
-        addRect(0, 0, outerWidth, outerHeight, bg);
-
-        function addFGRect(x: number, y: number, w: number, h: number): void {
-            addRect(
-                (x * xScale) + quiet,
-                (y * yScale) + quiet,
-                w * xScale,
-                h * yScale,
-                fg
-            );
-        }
+        // Add the background rect
+        addRect(0, 0, intrinsicOuterWidth, intrinsicOuterHeight, "bg");
 
         let doubleStrip: boolean = true;
         // noinspection FallThroughInSwitchStatementJS
         switch (opts.svgCollation) {
             case 0:
+                // No collation, add each pixel as a 1x1 rect
                 for (let y=0; y < matrix.height; y++) {
                     for (let x=0; x < matrix.width; x++) {
                         if (matrix.get(x, y) !== 1) continue;
-                        addFGRect(x, y, 1, 1);
+                        addRect(x + intrinsicQuiet, y + intrinsicQuiet, 1, 1, "fg");
                     }
                 }
                 break;
@@ -114,30 +145,34 @@ export class SVGQRRenderer implements QRRenderer<string, SVGQRRenderer.Options> 
                 const strips = new StripMatrix(matrix.width, matrix.height);
                 strips.addAll(matrix);
                 if (doubleStrip) {
+                    // Double strip collation
                     for (let rect of strips.popRects())
-                        addFGRect(rect.x, rect.y, rect.width, rect.height);
+                        addRect(rect.x + intrinsicQuiet, rect.y + intrinsicQuiet, rect.width, rect.height, "fg");
                 } else {
+                    // Strip collation
                     for (let strip of strips.strips)
-                        addFGRect(strip.start, strip.y, strip.end - strip.start, 1);
+                        addRect(strip.start + intrinsicQuiet, strip.y + intrinsicQuiet, strip.end - strip.start, 1, "fg");
                 }
                 break;
             case 3:
+                // Perfect collation, trace the outline of each pixel cluster and add it as a path
                 const tracer = new Tracer(matrix);
                 let poll: string | -1;
-                while ((poll = tracer.pollString(xScale, yScale, quiet, quiet)) !== -1) {
+                while ((poll = tracer.pollString(1, 1, intrinsicQuiet, intrinsicQuiet)) !== -1) {
                     space();
-                    out.append(MAGIC_12)
+                    out.append(MAGIC_12) // <path d="
                         .append(poll)
-                        .append(MAGIC_10)
-                        .append(fg)
-                        .append(MAGIC_11);
+                        .append(MAGIC_10) // " class="
+                        .append("fg\"")
+                        .append(localStyles("path", "fg", poll))
+                        .append(MAGIC_11); // />
                     newline();
                 }
                 break;
         }
 
         // Add closing tag
-        out.append(MAGIC_15);
+        out.append(MAGIC_15); // </svg>
         newline();
 
         return out.toString();
@@ -146,6 +181,11 @@ export class SVGQRRenderer implements QRRenderer<string, SVGQRRenderer.Options> 
 }
 
 export namespace SVGQRRenderer {
+
+    /**
+     * @see Options.svgCustomCSS
+     */
+    export type CustomStylesFunction = (tagName: "rect" | "path", className: "bg" | "fg", path: string) => string;
 
     export type Options = QRRenderOptions & {
         /**
@@ -162,13 +202,32 @@ export namespace SVGQRRenderer {
          * - **2** : Double Strips (Collate along X axis, then along Y axis)
          * - **3** : Perfect (All pixels with cardinal neighbors are collated)
          */
-        svgCollation?: 0 | 1 | 2 | 3
+        svgCollation?: 0 | 1 | 2 | 3,
+        /**
+         * Adds custom styles to the SVG. Can either be a string or function. If the string is empty, or a string
+         * returned by the function is empty, it has no effect.
+         *
+         * ## String
+         * Sets global styles for the SVG. The ``.bg`` and ``.fg`` selectors can be used to target
+         * background and foreground shapes respectively. No validation is done on this, so invalid selectors could
+         * break the SVG.
+         *
+         * **Example**: ``.fg { stroke: red; }``
+         *
+         * ## Function
+         * Sets styles for individual paths on the SVG. The function takes up to 3 arguments and should return CSS
+         * rules.
+         *
+         * **Example**: ``(tagName, className) => (className === "fg" ? "stroke: red" : "fill: blue")``
+         */
+        svgCustomCSS?: string | CustomStylesFunction
     };
 
     export const DefaultOptions: Required<Options> = {
         ...QRRenderDefaultOptions,
         svgNoWhitespace: false,
-        svgCollation: 3
+        svgCollation: 3,
+        svgCustomCSS: ""
     };
 
 }

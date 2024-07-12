@@ -12,11 +12,11 @@ This is strictly a QR encoder & renderer, future updates should consist mainly o
 <script>
     // Same as NodeJS
     enqr(
-        "https://wasabithumb.github.io/",
-        {
-            errorCorrectionLevel: "H",
-            characterSet: "ISO_8859_1"
-        }
+            "https://wasabithumb.github.io/",
+            {
+                errorCorrectionLevel: "H",
+                characterSet: "ISO_8859_1"
+            }
     ).renderToImage({
         image: document.querySelector("#qr"),
         trySVG: true
@@ -112,6 +112,27 @@ This covers all methods that may return SVG data under any circumstances (`rende
 | trySVG | `boolean` | If true, and SVGs are supported in the current environment, the render operation may return SVG (otherwise PNG). |
 | svgNoWhitespace | `boolean` | If true, no whitespace will be included between SVG tags. |
 | svgCollation | ``0`` \| ``1`` \| ``2`` \| ``3`` | An optimization that determines how pixels will be collated into shapes. Default is 3. Higher collation tends to produce smaller SVGs. Collation levels 1 & 2 may be faster to render. |
+| svgCustomCSS | ``string`` \| ``function`` | **(v1.4.0+)** Adds custom styles to the SVG, e.g. ``.fg { stroke: red; }``. See [Custom CSS](#svg-custom-css) for more info. |
+
+#### SVG Custom CSS
+If ``svgCustomCSS`` is set as a string, it determines global styles for the entire SVG. The ``.bg`` and ``.fg`` selectors can be used to
+select background and foreground shapes respectively. ``svgCustomCSS`` can also be a function which determines CSS rules for individual elements. For example:
+
+```js
+{
+    // String syntax
+    svgCustomCSS: ".fg { stroke: red; } .bg { fill: blue; }",
+    // Function syntax
+    svgCustomCSS: function(tagName, className, path) {
+        // tagName is either "rect" or "path"
+        // className is either "bg" or "fg"
+        // path is SVG path data (https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d)
+        return className === "fg" ?
+            "stroke: red" :
+            "fill: blue";
+    }
+}
+```
 
 ### HTML Image
 This applies only to `renderToImage`

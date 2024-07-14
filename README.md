@@ -122,6 +122,8 @@ This covers all methods that may return SVG data under any circumstances (`rende
 | svgCollation | ``0`` \| ``1`` \| ``2`` \| ``3`` | An optimization that determines how pixels will be collated into shapes. Default is 3. Higher collation tends to produce smaller SVGs. Collation levels 1 & 2 may be faster to render. |
 | svgCustomCSS | ``string`` \| ``function`` | **(v1.4.0+)** Adds custom styles to the SVG, e.g. ``.fg { stroke: red; }``. See [Custom CSS](#svg-custom-css) for more info. |
 
+<img src="https://raw.githubusercontent.com/WasabiThumb/enqr/dev/1.5/doc/collationLevels.png" alt="Comparison of SVG Collation Levels" style="height: 6em">
+
 #### SVG Custom CSS
 If ``svgCustomCSS`` is set as a string, it determines global styles for the entire SVG. The ``.bg`` and ``.fg`` selectors can be used to
 select background and foreground shapes respectively. ``svgCustomCSS`` can also be a function which determines CSS rules for individual elements. For example:

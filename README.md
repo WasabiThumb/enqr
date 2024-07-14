@@ -1,4 +1,12 @@
+<img src="https://raw.githubusercontent.com/WasabiThumb/enqr/dev/1.5/doc/sample.svg" alt="Sample SVG" style="height: 10em">
+
 # EnQR
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/WasabiThumb/enqr/node.js.yml)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/WasabiThumb/enqr)
+![npm bundle size](https://img.shields.io/bundlephobia/min/enqr)
+![NPM Version](https://img.shields.io/npm/v/enqr?label=release)
+
 A lightweight QR encoder for the browser & node loosely based on [zxing](https://github.com/zxing/zxing). The browser bundle is about 80KB (compare to [3.6MB](https://www.npmjs.com/package/qreator?activeTab=readme)).
 
 This is strictly a QR encoder & renderer, future updates should consist mainly of bug fixes.
@@ -122,7 +130,7 @@ This covers all methods that may return SVG data under any circumstances (`rende
 | svgCollation | ``0`` \| ``1`` \| ``2`` \| ``3`` | An optimization that determines how pixels will be collated into shapes. Default is 3. Higher collation tends to produce smaller SVGs. Collation levels 1 & 2 may be faster to render. |
 | svgCustomCSS | ``string`` \| ``function`` | **(v1.4.0+)** Adds custom styles to the SVG, e.g. ``.fg { stroke: red; }``. See [Custom CSS](#svg-custom-css) for more info. |
 
-<img src="https://raw.githubusercontent.com/WasabiThumb/enqr/dev/1.5/doc/collationLevels.png" alt="Comparison of SVG Collation Levels" style="height: 6em">
+<img src="https://raw.githubusercontent.com/WasabiThumb/enqr/dev/1.5/doc/collationLevels.png" alt="Comparison of SVG Collation Levels" style="height: 15em">
 
 #### SVG Custom CSS
 If ``svgCustomCSS`` is set as a string, it determines global styles for the entire SVG. The ``.bg`` and ``.fg`` selectors can be used to

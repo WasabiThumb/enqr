@@ -4,7 +4,7 @@ A lightweight QR encoder for the browser & node loosely based on [zxing](https:/
 This is strictly a QR encoder & renderer, future updates should consist mainly of bug fixes.
 
 Usage ([Browser](#usage-browser), [NodeJS](#usage-nodejs)) &bull; [Encode Hints](#encode-hints) &bull; [Render Options](#render-options)
-&bull; [Live Demo](https://jsfiddle.net/5rept9nf/5/) &bull; [GitHub](https://github.com/WasabiThumb/enqr/) &bull; [NPM](https://www.npmjs.com/package/enqr)
+&bull; [Live Demo](https://jsfiddle.net/ph3gr78j/1/) &bull; [GitHub](https://github.com/WasabiThumb/enqr/) &bull; [NPM](https://www.npmjs.com/package/enqr)
 
 ## Migrating to 1.5.X
 Native support for ``EUC_JP`` and ``GB2312`` [charsets](#encode-hints) have been dropped, allowing a **60% reduction in bundle size**. For most

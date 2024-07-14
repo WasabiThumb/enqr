@@ -6,6 +6,7 @@
         <entryData>
           <resourceRoots>
             <path value="file://$PROJECT_DIR$/patches" />
+            <path value="file://$PROJECT_DIR$/doc" />
           </resourceRoots>
         </entryData>
       </entry>

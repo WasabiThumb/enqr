@@ -152,9 +152,9 @@ export namespace Encoder {
             // noinspection SuspiciousTypeOfGuard
             if (!(content instanceof Uint8Array)) throw new Error("Content must be string or Uint8Array");
             content = Charsets.UTF_8.decode(content);
-            hasEncodingHint = true;
             encoding = Charsets.UTF_8;
-        } if (hasEncodingHint) {
+        }
+        if (hasEncodingHint) {
             let value = hints!.characterSet!;
             if (typeof value === "object") {
                 encoding = value as Charset;

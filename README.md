@@ -1,14 +1,30 @@
+<img src="https://raw.githubusercontent.com/WasabiThumb/enqr/dev/1.5/doc/sample.svg" alt="Sample SVG" style="height: 10em">
+
 # EnQR
-A lightweight QR encoder for the browser & node loosely based on [zxing](https://github.com/zxing/zxing). The browser bundle is about 200KB (compare to [3.6MB](https://www.npmjs.com/package/qreator?activeTab=readme)).
+
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/WasabiThumb/enqr/node.js.yml)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/WasabiThumb/enqr)
+![npm bundle size](https://img.shields.io/bundlephobia/min/enqr)
+![NPM Version](https://img.shields.io/npm/v/enqr?label=release)
+
+A lightweight QR encoder for the browser & node loosely based on [zxing](https://github.com/zxing/zxing). The browser bundle is about 80KB (compare to [3.6MB](https://www.npmjs.com/package/qreator?activeTab=readme)).
 
 This is strictly a QR encoder & renderer, future updates should consist mainly of bug fixes.
 
-[Live Demo](https://jsfiddle.net/5rept9nf/5/) | [GitHub](https://github.com/WasabiThumb/enqr/) | [NPM](https://www.npmjs.com/package/enqr)
+Usage ([Browser](#usage-browser), [NodeJS](#usage-nodejs)) &bull; [Encode Hints](#encode-hints) &bull; [Render Options](#render-options)
+&bull; [Live Demo](https://jsfiddle.net/ph3gr78j/1/) &bull; [GitHub](https://github.com/WasabiThumb/enqr/) &bull; [NPM](https://www.npmjs.com/package/enqr)
+
+## Migrating to 1.5.X
+Native support for ``EUC_JP`` and ``GB2312`` [charsets](#encode-hints) have been dropped, allowing a **60% reduction in bundle size**. For most
+use cases, they can easily be replaced by ``UTF_8``. ``SHIFT_JIS`` remains as it has special
+behavior in combination with Kanji mode. If you want to use these charsets, depend on EnQR **1.4** or earlier
+OR use a library such as [iconv-lite](https://www.npmjs.com/package/iconv-lite) to first encode your data to the desired charset and then pass it to EnQR
+as a ``Uint8Array`` or ``Buffer``.
 
 ## Usage (Browser)
 ```html
 <img id="qr" src="" alt="QR Code">
-<script src="https://unpkg.com/enqr@1.1.0/umd/enqr.min.js" integrity="sha384-ILixcZQvrub+hlDJ53vKkdICGgwmQGmn5ktpAENXyZVTwPuVjdmJM4gj+ql86KHC" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/enqr@1.4.0/umd/enqr.min.js" integrity="sha384-KnZr9AmTVEd8zD45lbgokG5pMpkUHXQwiqLg2aXjufzkiegPQ/YQ3pXh7N3+9Zuv" crossorigin="anonymous"></script>
 <script>
     // Same as NodeJS
     enqr(
@@ -85,7 +101,7 @@ Closely matches the implementation of hints in zxing.
 | Name | Type | Description |
 | --:  | :-: | :--         |
 | errorCorrection | `"L"` \| `"M"` \| `"Q"` \| `"H"` | The level of error correction to use, default is `L`. Each level offers about 7%, 15%, 25% and 30% correction respectively. |
-| characterSet | `"US_ASCII"` \| `"UTF_16"` \| `"UTF_16LE"` \| `"UTF_16BE"` \| `"UTF_8"` \| `"ISO_8859_1"` \| `"GB2312"` \| `"SHIFT_JIS"` \| `"EUC_JP"` | The character set to use when encoding. In general the default is `ISO_8859_1`, but there are some implementation details to explore if you're feeling brave. `"SHIFT_JIS"` should be explicitly set for Kanji. |
+| characterSet | `"US_ASCII"` \| `"UTF_16"` \| `"UTF_16LE"` \| `"UTF_16BE"` \| `"UTF_8"` \| `"ISO_8859_1"` \| `"SHIFT_JIS"` \| ~~`"EUC_JP"`~~ \| ~~`"GB2312"`~~ | The character set to use when encoding. In general the default is `ISO_8859_1`, but there are some implementation details to explore if you're feeling brave. `"SHIFT_JIS"` should be explicitly set for Kanji. <br><br> **Version 1.5+**: Support has been [dropped](#migrating-to-15x) for ``EUC_JP`` and ``GB2312`` charsets. |
 | qrVersion | ``number`` (1-40) | The [version](https://www.qrcode.com/en/about/version.html) number of the QR code, correlating to the amount of data that it can store. If unset, the smallest version that can store the specified data will be used.  |
 | qrMaskPattern | ``number`` (0-7) | The mask pattern of the QR code. If unspecified, the encoder tries all patterns and selects the one that satisfies all 4 readability criteria maximally. |
 | qrCompact | ``boolean`` | Not currently supported. |
@@ -113,6 +129,8 @@ This covers all methods that may return SVG data under any circumstances (`rende
 | svgNoWhitespace | `boolean` | If true, no whitespace will be included between SVG tags. |
 | svgCollation | ``0`` \| ``1`` \| ``2`` \| ``3`` | An optimization that determines how pixels will be collated into shapes. Default is 3. Higher collation tends to produce smaller SVGs. Collation levels 1 & 2 may be faster to render. |
 | svgCustomCSS | ``string`` \| ``function`` | **(v1.4.0+)** Adds custom styles to the SVG, e.g. ``.fg { stroke: red; }``. See [Custom CSS](#svg-custom-css) for more info. |
+
+<img src="https://raw.githubusercontent.com/WasabiThumb/enqr/dev/1.5/doc/collationLevels.png" alt="Comparison of SVG Collation Levels" style="height: 15em">
 
 #### SVG Custom CSS
 If ``svgCustomCSS`` is set as a string, it determines global styles for the entire SVG. The ``.bg`` and ``.fg`` selectors can be used to

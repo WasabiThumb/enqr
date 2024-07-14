@@ -8,6 +8,7 @@ import {Canvas} from "canvas";
 import {isBrowser, isNode} from "browser-or-node";
 import {CanvasQRRenderer, OffscreenCanvasQRRenderer} from "../renderer/impl/canvas";
 import {SVGQRRenderer} from "../renderer/impl/svg";
+import {TypedArrayUtil} from "../util/typedArray";
 
 /*
  * Reference: https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/qrcode/encoder/QRCode.java
@@ -288,11 +289,7 @@ class QRCodeImpl implements QRCode {
     private renderToSVGDataURL(options?: SVGQRRenderer.Options): string {
         const base: string = "data:image/svg+xml;charset=UTF-8;base64,";
         const data: string = this.renderToSVG(options);
-        if (isNode) {
-            return base + Buffer.from(Charsets.UTF_8.encode(data).buffer).toString("base64");
-        } else {
-            return base + window.btoa(data);
-        }
+        return base + TypedArrayUtil.toBase64(Charsets.UTF_8.encode(data));
     }
 
     renderToImage(options?: RenderToImageOptions): Promise<HTMLImageElement> {

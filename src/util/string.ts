@@ -1,70 +1,13 @@
-import * as iconv from "iconv-lite";
+import { StringBuilder } from "./string/builder";
+export { StringBuilder } from "./string/builder";
 
-/**
- * @see Charsets
- */
-export interface Charset {
-    readonly name: string;
-    encode(str: string): Uint8Array;
-    decode(buf: Uint8Array): string;
-}
+import { ICharset } from "./string/charset";
+export type Charset = ICharset;
 
-class IconvCharset implements Charset {
-
-    readonly name: string;
-    readonly id: string;
-    readonly options?: iconv.Options;
-    constructor(id: string, name: string = id, options?: iconv.Options) {
-        this.id = id;
-        this.name = name;
-        if (!!options) this.options = options;
-    }
-
-    encode(str: string): Uint8Array {
-        return iconv.encode(str, this.id, this.options);
-    }
-
-    decode(buf: Uint8Array): string {
-        return iconv.decode(
-            buf as unknown as Buffer,
-            this.id,
-            this.options
-        );
-    }
-
-    toString(): string {
-        return this.name;
-    }
-
-    get [Symbol.toStringTag]() {
-        return `Charset{${this.name}}`;
-    }
-
-}
-
-class NativeCharset implements Charset {
-
-    readonly name: string = "UTF_8";
-    readonly encoder: TextEncoder = new TextEncoder();
-    readonly decoder: TextDecoder = new TextDecoder();
-
-    encode(str: string): Uint8Array {
-        return this.encoder.encode(str);
-    }
-
-    decode(buf: Uint8Array): string {
-        return this.decoder.decode(buf);
-    }
-
-    toString(): string {
-        return this.name;
-    }
-
-    get [Symbol.toStringTag]() {
-        return `Charset{${this.name}}`;
-    }
-
-}
+import { UTF8Charset } from "./string/charset/utf8";
+import { UTF16Charset, UTF16BECharset, UTF16LECharset } from "./string/charset/utf16";
+import { Iso88591Charset, ASCIICharset } from "./string/charset/iso88591";
+import { ShiftJISCharset } from "./string/charset/sjis";
 
 /**
  * Meant to replace both
@@ -73,17 +16,16 @@ class NativeCharset implements Charset {
  * <a href="https://github.com/zxing/zxing/blob/master/core/src/main/java/com/google/zxing/common/StringUtils.java">xzing/common/StringUtils</a>
  */
 export const Charsets = {
-    US_ASCII: new IconvCharset("ascii", "US_ASCII") as Charset,
-    ISO_8859_1: new IconvCharset("iso88591", "ISO_8859_1") as Charset,
-    UTF_8: new NativeCharset() as Charset,
-    UTF_16BE: new IconvCharset("utf16-be", "UTF_16BE") as Charset,
-    UTF_16LE: new IconvCharset("utf16le", "UTF_16LE") as Charset,
-    UTF_16: new IconvCharset("utf16", "UTF_16", { addBOM: true }) as Charset,
-    SHIFT_JIS: new IconvCharset("Shift_JIS", "SHIFT_JIS") as Charset,
-    GB2312: new IconvCharset("GB2312") as Charset,
-    EUC_JP: new IconvCharset("EUC-JP", "EUC_JP") as Charset
+    US_ASCII: new ASCIICharset() as Charset,
+    ISO_8859_1: new Iso88591Charset() as Charset,
+    UTF_8: new UTF8Charset() as Charset,
+    UTF_16BE: new UTF16BECharset() as Charset,
+    UTF_16LE: new UTF16LECharset() as Charset,
+    UTF_16: new UTF16Charset() as Charset,
+    SHIFT_JIS: new ShiftJISCharset() as Charset
 };
 export type CharsetName = keyof typeof Charsets;
+
 
 export namespace Charset {
 
@@ -137,102 +79,13 @@ export namespace Charset {
                 return [ 26 ];
             case Charsets.US_ASCII:
                 return [ 27, 170 ];
+/*
             case Charsets.GB2312:
                 return [ 29 ];
+*/
             default:
                 return null;
         }
-    }
-
-}
-
-type TransferableArrayBuffer = ArrayBuffer & {
-    transfer(length: number): ArrayBuffer
-};
-
-const IS_BIG_ENDIAN: boolean = (() => {
-    const buf = new ArrayBuffer(2);
-    const u8 = new Uint8Array(buf);
-    const u16 = new Uint16Array(buf);
-    u8[0] = 0xAA;
-    u8[1] = 0xBB;
-    return u16[0] === 0xAABB;
-})();
-
-const UTF_16NATIVE: Charset = Charsets[IS_BIG_ENDIAN ? "UTF_16BE" : "UTF_16LE"];
-
-export class StringBuilder {
-
-    private static LOAD_FACTOR: number = 0.75;
-
-    private arr: Uint16Array;
-    private capacity: number;
-    private index: number;
-    constructor(capacity: number = 16) {
-        this.capacity = Math.abs(capacity);
-        this.arr = new Uint16Array(this.capacity);
-        this.index = 0;
-    }
-
-    private ensureCapacity(extra: number): void {
-        let target: number = this.index + extra;
-        if (target <= this.capacity) return;
-
-        target = Math.ceil(target / StringBuilder.LOAD_FACTOR);
-
-        let ab: ArrayBuffer = this.arr.buffer;
-        if ("transfer" in ab) {
-            ab = (ab as TransferableArrayBuffer).transfer(target << 1);
-            this.arr = new Uint16Array(ab);
-        } else {
-            const n = new Uint16Array(target);
-            n.set(this.arr, 0);
-            this.arr = n;
-        }
-
-        this.capacity = target;
-    }
-
-    get length(): number {
-        return this.index;
-    }
-
-    clear() {
-        this.index = 0;
-    }
-
-    append(value: string | { toString(): string }): this {
-        this.appendString(typeof value === "string" ? value : value.toString());
-        return this;
-    }
-
-    appendSpace(): this {
-        return this.appendChar(32);
-    }
-
-    appendNewline(): this {
-        return this.appendChar(10);
-    }
-
-    appendDigit(d: number): this {
-        return this.appendChar(48 + (d & 0xF));
-    }
-
-    appendChar(c: number): this {
-        this.ensureCapacity(1);
-        this.arr[this.index++] = c;
-        return this;
-    }
-
-    appendString(s: string): this {
-        this.ensureCapacity(s.length);
-        for (let i=0; i < s.length; i++) this.arr[this.index++] = s.charCodeAt(i);
-        return this;
-    }
-
-    toString(): string {
-        const u8 = (new Uint8Array(this.arr.buffer)).subarray(0, this.index << 1);
-        return UTF_16NATIVE.decode(u8);
     }
 
 }

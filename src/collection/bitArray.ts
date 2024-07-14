@@ -1,10 +1,8 @@
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/transfer
 import {StringBuilder} from "../util/string";
+import {TypedArrayUtil} from "../util/typedArray";
 
-type TransferableArrayBuffer = ArrayBuffer & {
-    transfer(length: number): ArrayBuffer
-};
 
 function ctz32(x: number): number {
     return x | 0 ? 31 - Math.clz32(x & -x) : 32;
@@ -22,7 +20,7 @@ export class BitArray {
         return ret;
     }
 
-    private buf: ArrayBuffer | TransferableArrayBuffer;
+    private buf: ArrayBuffer;
     private i32: Int32Array;
     private size: number;
 
@@ -49,16 +47,8 @@ export class BitArray {
     private ensureCapacity(newSize: number) {
         if (newSize > this.buf.byteLength * 8) {
             const target = Math.floor((Math.ceil(newSize / BitArray.LOAD_FACTOR) + 31) / 32) * 4;
-            if ("transfer" in this.buf) {
-                this.buf = this.buf.transfer(target);
-                this.i32 = new Int32Array(this.buf);
-            } else {
-                const n = new ArrayBuffer(target);
-                const arr = new Int32Array(n);
-                arr.set(this.i32);
-                this.buf = n;
-                this.i32 = arr;
-            }
+            this.buf = TypedArrayUtil.transferArrayBuffer(this.buf, target);
+            this.i32 = new Int32Array(this.buf);
             this.size = newSize;
         } else {
             this.size = Math.max(this.size, newSize);

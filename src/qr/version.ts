@@ -4,7 +4,7 @@
  */
 
 import {ErrorCorrectionLevel} from "../ec/level";
-import {Buffer} from "safer-buffer";
+import {TypedArrayUtil} from "../util/typedArray";
 
 export interface ECB {
     readonly count: number,
@@ -175,7 +175,7 @@ export namespace Version {
             `KDVCy8wRcwouFy8KGCMZEw8jEH4MGig2RMvMEXMBdA4uFS8dGBMZCw8uEH4OHCo4RsvMDXMGdA4uFy8sGAcZOxABEX8MGCQwPEjLzAx5` +
             `B3oMLxowJxgOGRYPKRB/CRYjMD1Ky8wGeQ56Bi8iMC4YChkCD0AQfwsYJTI/TMvMEXoEex0uDi8xGAoZGA8uEH8NGic0QU7LzAR6EnsN` +
             `LiAvMBgOGSoPIBB/ChgmNEJQy8wUdQR2KC8HMCsYFhkKD0MQfwwaKDZEUsvME3YGdxIvHzAiGCIZFA89EA==`;
-        const bin: Uint8Array = Buffer.from(dat, "base64");
+        const bin: Uint8Array = TypedArrayUtil.fromBase64(dat);
 
         let i = 0;
         let version: number = 0;
